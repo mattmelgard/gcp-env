@@ -28,6 +28,14 @@ variable "env_region" {
   }
 }
 
+variable "enable_manual_nat_ip" {
+  description = <<-EOT
+    Enables manual NAT IP allocation when provisioning the environment's NAT gateway.
+    This is used as a way to provide a stable IP address to applications within the cluster when calling out to external services.
+  EOT
+  default     = false
+}
+
 #####################
 # GCP Configuration #
 #####################
