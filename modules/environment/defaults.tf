@@ -11,4 +11,9 @@ locals {
     "secretmanager.googleapis.com",
     "storage-api.googleapis.com",
   ]
+
+  non_prod_environment_types = ["development", "staging"]
+
+  # Disable deletion protection in non-prod environments
+  deletion_protection_enabled = contains(local.non_prod_environment_types, var.env_type) ? false : true
 }

@@ -67,7 +67,7 @@ variable "main_cluster_subnet_cidr" {
   default     = "10.10.0.0/20"
   validation {
     condition     = can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", var.main_cluster_subnet_cidr))
-    error_message = "CIDR block must be in the format x.x.x.x/<prefix>"
+    error_message = "CIDR block must be in the format x.x.x.x/<some_network_prefix>"
   }
 }
 
@@ -77,7 +77,7 @@ variable "main_cluster_pod_cidr" {
   default     = "10.12.0.0/14"
   validation {
     condition     = can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", var.main_cluster_pod_cidr))
-    error_message = "CIDR block must be in the format x.x.x.x/<prefix>"
+    error_message = "CIDR block must be in the format x.x.x.x/<some_network_prefix>"
   }
 }
 
@@ -87,6 +87,80 @@ variable "main_cluster_services_cidr" {
   default     = "10.16.0.0/14"
   validation {
     condition     = can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", var.main_cluster_services_cidr))
-    error_message = "CIDR block must be in the format x.x.x.x/<prefix>"
+    error_message = "CIDR block must be in the format x.x.x.x/<some_network_prefix>"
   }
+}
+
+variable "main_cluster_master_cidr" {
+  description = "The CIDR range assigned to the GCP hosted control plane for the main GKE cluster in this environment."
+  type        = string
+  default     = "10.20.0.0/28"
+  validation {
+    condition     = can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/28", var.main_cluster_master_cidr))
+    error_message = "Cluster master CIDR block must be in the format x.x.x.x/28"
+  }
+}
+
+variable "main_cluster_master_authorized_networks" {
+  description = "A list of CIDR blocks to include in the main cluster's master authorized networks."
+  type = list(object({
+    display_name = string
+    cidr_block   = string
+  }))
+  default = []
+}
+
+variable "main_cluster_authorized_control_plane_ports" {
+  description = <<-EOT
+    TCP ports that the main cluster's control plane is authorized to reach cluster nodes on. This is often
+    needed for cluster services that need to have bi-directional communication with the control plane, such as a
+    service mesh or ingress controller. See https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters#add_firewall_rules
+    for more info.
+  EOT
+  type = list(number)
+  default = []
+}
+
+variable "main_cluster_default_node_availability_zones" {
+  description = "The list of availability zones (from the broader network region) to deploy the main cluster's node-pools within."
+  type        = list(string)
+  default     = ["a", "b", "c"]
+}
+
+variable "config_connector_project_roles" {
+  description = "The project roles to assign the GKE Config Connector GCP service account. Defaults to the Editor and Service Account Admin roles."
+  type        = list(string)
+  default     = ["roles/editor", "roles/iam.serviceAccountAdmin"]
+}
+
+variable "main_cluster_node_pools" {
+  description = "A map (where the key is name) of node pools to create in the cluster."
+  type = map(object({
+    min_node_count = number
+    max_node_count = number
+    machine_type   = string
+    labels         = optional(map(string))
+    node_tags      = optional(list(string), [])
+    zones          = optional(list(string))
+    preemptible    = optional(bool)
+    taints = optional(
+      list(object({
+        key    = optional(string)
+        value  = optional(string)
+        effect = optional(string)
+      })), []
+    )
+  }))
+  default = {}
+}
+
+variable "main_cluster_features" {
+  description = "Enable or disable features on the main cluster for this environment."
+  type = object({
+    enable_workload_scanning    = optional(bool, true)
+    enable_shielded_nodes       = optional(bool, true)
+    enable_config_connector     = optional(bool, false)
+    enable_filestore_csi_driver = optional(bool, false)
+  })
+  default = {}
 }
