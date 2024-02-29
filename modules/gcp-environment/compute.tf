@@ -1,17 +1,3 @@
-locals {
-  main_cluster_name                               = "main"
-  main_cluster_service_account_name               = "${local.main_cluster_name}-sa"
-  main_cluster_default_master_authorized_networks = []
-  # https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
-  main_cluster_sa_default_roles = toset([
-    "roles/logging.logWriter",
-    "roles/monitoring.metricWriter",
-    "roles/monitoring.viewer",
-    "roles/storage.objectViewer"
-  ])
-  required_node_tags = [local.internal_ingress_tag]
-}
-
 resource "google_service_account" "main_cluster_sa" {
   project      = var.gcp_project_id
   account_id   = local.main_cluster_service_account_name
