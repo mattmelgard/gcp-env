@@ -17,7 +17,7 @@ data "http" "myip" {
 }
 
 module "environment" {
-  source         = "../modules/environment"
+  source         = "../modules/gcp-environment"
   env_name       = "my-env"
   env_type       = "development"
   gcp_project_id = var.gcp_project_id
