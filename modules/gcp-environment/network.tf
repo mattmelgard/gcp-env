@@ -1,14 +1,3 @@
-locals {
-  network_namespace_prefix         = "${var.env_name}-${var.gcp_region}"
-  main_cluster_subnet_name         = "${local.network_namespace_prefix}-main-cluster-subnet"
-  main_cluster_pod_subnet_name     = "${local.network_namespace_prefix}-main-cluster-pods-subnet"
-  main_cluster_service_subnet_name = "${local.network_namespace_prefix}-main-cluster-services-subnet"
-  main_vpc_router_name             = "${local.network_namespace_prefix}-router"
-  main_vpc_nat_name                = "${local.network_namespace_prefix}-nat"
-  nat_router_compute_address_count = 2
-  internal_ingress_tag             = "internal-ingress"
-}
-
 resource "google_compute_network" "main" {
   project                 = var.gcp_project_id
   name                    = "main"
