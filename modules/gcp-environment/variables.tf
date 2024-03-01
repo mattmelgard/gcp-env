@@ -68,7 +68,7 @@ variable "gcp_service_accounts" {
     create_key              = optional(bool, false)
     workload_identity_users = optional(list(string), [])
   }))
-  default     = {}
+  default = {}
 }
 
 variable "k8s_workload_service_accounts" {
@@ -78,13 +78,13 @@ variable "k8s_workload_service_accounts" {
   EOT
   type = map(
     object({
-      roles         = set(string)
-      namespaces    = set(string)
-      create_key    = optional(bool, false)
-      k8s_sa_name   = optional(string) # This will be set to the K8s SA name when it doesn't match the GCP SA name
+      roles       = set(string)
+      namespaces  = set(string)
+      create_key  = optional(bool, false)
+      k8s_sa_name = optional(string) # This will be set to the K8s SA name when it doesn't match the GCP SA name
     })
   )
-  default     = {}
+  default = {}
 }
 
 ##############################
@@ -147,8 +147,8 @@ variable "main_cluster_authorized_control_plane_ports" {
     service mesh or ingress controller. See https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters#add_firewall_rules
     for more info.
   EOT
-  type = list(number)
-  default = []
+  type        = list(number)
+  default     = []
 }
 
 variable "main_cluster_default_node_availability_zones" {

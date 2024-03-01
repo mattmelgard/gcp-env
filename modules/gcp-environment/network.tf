@@ -70,7 +70,7 @@ resource "google_compute_router_nat" "main" {
 # communication with the control plane on other ports, we need to explicitly allow it.
 # Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters#add_firewall_rules
 resource "google_compute_firewall" "gke_control_plane_tcp_port_node_access" {
-  count = length(var.main_cluster_authorized_control_plane_ports) > 0 ? 1 : 0
+  count         = length(var.main_cluster_authorized_control_plane_ports) > 0 ? 1 : 0
   project       = var.gcp_project_id
   name          = "main-cluster-control-plane-tcp-node-access"
   description   = <<-EOT
