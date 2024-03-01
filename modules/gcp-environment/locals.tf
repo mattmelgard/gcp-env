@@ -33,7 +33,9 @@ locals {
     "roles/logging.logWriter",
     "roles/monitoring.metricWriter",
     "roles/monitoring.viewer",
-    "roles/storage.objectViewer"
+    "roles/autoscaling.metricsWriter",
+    "roles/stackdriver.resourceMetadata.writer",
+    "roles/artifactregistry.reader",
   ])
   required_node_tags = [local.internal_ingress_tag]
 }
