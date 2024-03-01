@@ -5,15 +5,16 @@ resource "google_service_account" "main_cluster_sa" {
 }
 
 resource "google_container_cluster" "main_cluster" {
-  project                  = var.gcp_project_id
-  name                     = local.main_cluster_name
-  location                 = var.gcp_region
-  network                  = google_compute_network.main.self_link
-  subnetwork               = google_compute_subnetwork.main_cluster.self_link
-  enable_shielded_nodes    = var.main_cluster_features.enable_shielded_nodes
-  initial_node_count       = 1
-  remove_default_node_pool = true
-  deletion_protection      = local.deletion_protection_enabled
+  project                     = var.gcp_project_id
+  name                        = local.main_cluster_name
+  location                    = var.gcp_region
+  network                     = google_compute_network.main.self_link
+  subnetwork                  = google_compute_subnetwork.main_cluster.self_link
+  enable_shielded_nodes       = var.main_cluster_features.enable_shielded_nodes
+  initial_node_count          = 1
+  enable_intranode_visibility = true
+  remove_default_node_pool    = true
+  deletion_protection         = local.deletion_protection_enabled
 
   # Accept known production-ready upgrades for GKE by default
   # https://cloud.google.com/kubernetes-engine/docs/concepts/release-channels

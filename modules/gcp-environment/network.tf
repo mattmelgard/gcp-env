@@ -39,7 +39,7 @@ resource "google_compute_router" "main" {
 }
 
 resource "google_compute_address" "nat_gateway_manual_ip" {
-  count   = var.enable_manual_nat_ip ? local.nat_router_compute_address_count : 0
+  count   = var.enable_static_nat_ip ? local.nat_router_compute_address_count : 0
   name    = "nat-manual-ip-${count.index}"
   project = var.gcp_project_id
   region  = google_compute_subnetwork.main_cluster.region
@@ -50,8 +50,8 @@ resource "google_compute_router_nat" "main" {
   project                            = var.gcp_project_id
   region                             = var.gcp_region
   router                             = google_compute_router.main.name
-  nat_ip_allocate_option             = var.enable_manual_nat_ip ? "MANUAL_ONLY" : "AUTO_ONLY"
-  nat_ips                            = var.enable_manual_nat_ip ? google_compute_address.nat_gateway_manual_ip.*.self_link : null
+  nat_ip_allocate_option             = var.enable_static_nat_ip ? "MANUAL_ONLY" : "AUTO_ONLY"
+  nat_ips                            = var.enable_static_nat_ip ? google_compute_address.nat_gateway_manual_ip.*.self_link : null
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
   subnetwork {
     name                    = google_compute_subnetwork.main_cluster.self_link
@@ -70,7 +70,7 @@ resource "google_compute_router_nat" "main" {
 # communication with the control plane on other ports, we need to explicitly allow it.
 # Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters#add_firewall_rules
 resource "google_compute_firewall" "gke_control_plane_tcp_port_node_access" {
-  count = length(var.main_cluster_authorized_control_plane_ports) > 0 ? 1 : 0
+  count         = length(var.main_cluster_authorized_control_plane_ports) > 0 ? 1 : 0
   project       = var.gcp_project_id
   name          = "main-cluster-control-plane-tcp-node-access"
   description   = <<-EOT
