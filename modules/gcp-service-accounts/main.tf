@@ -34,7 +34,6 @@ locals {
       for namespace in value.namespaces : {
         name          = name
         namespace     = namespace
-        create_k8s_sa = lookup(value, "create_k8s_sa")
         k8s_sa_name   = value.k8s_sa_name != null ? value.k8s_sa_name : name
       }
     ]
